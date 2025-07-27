@@ -1,0 +1,8 @@
+langchain
+langchain-nvidia-ai-endpoints
+faiss-cpu
+streamlit
+python-dotenv
+langchain-community
+sentence-transformers
+huggingface-transformers
