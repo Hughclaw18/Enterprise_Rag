@@ -7,3 +7,4 @@ langchain-community
 sentence-transformers
 fastapi
 uvicorn[standard]
+ragas
