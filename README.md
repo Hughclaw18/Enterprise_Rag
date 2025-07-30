@@ -1,6 +1,6 @@
 # Enterprise Document Master 🔮
 
-An AI-powered Q&A system for corporate earnings transcripts, built with Retrieval Augmented Generation (RAG), LangChain, and Streamlit.
+An AI-powered Q&A system for corporate earnings transcripts, built with RAG, LangChain, Streamlit, and **NVIDIA NeMo** models.
 
 ## 📋 Table of Contents
 - [Features](#-features)
@@ -12,19 +12,20 @@ An AI-powered Q&A system for corporate earnings transcripts, built with Retrieva
 
 ## 🚀 Features
 
-* **Advanced Document Retrieval:** Utilizes a **FAISS** vector store for rapid, semantic searching of corporate transcript contents.
+* **Advanced Document Retrieval:** Utilizes a **FAISS** vector store and **NVIDIA NeMo** for high-accuracy embedding and reranking.
+* **State-of-the-Art Generation:** Powered by the **Llama 3.3 Nemotron** model for insightful and context-aware answers.
 * **Interactive Chat Interface:** A **Streamlit-based** UI provides a seamless, real-time Q&A experience with full conversation history.
 * **Secure User Management:** Features robust **user authentication** and session management to ensure secure, personalized access.
 * **Persistent Data Storage:** Integrates with **SQLite** to save user profiles, chat sessions, and message history.
-* **Dynamic Configuration:** Easily manage API keys and application settings through dedicated environment and configuration files.
 
 ## 🛠️ Technology Stack
 
 * **Frontend:** Streamlit
 * **Backend & Orchestration:** LangChain, Python
+* **LLM:** NVIDIA NeMo (Llama 3.3 Nemotron)
+* **Embedding & Reranking:** NVIDIA NeMo
 * **Vector Store:** FAISS (Facebook AI Similarity Search)
 * **Database:** SQLite
-* **LLM Provider:** OpenAI
 
 ## 🏁 Getting Started
 
@@ -33,7 +34,7 @@ Follow these steps to get the project running on your local machine.
 ### Prerequisites
 
 * Python 3.9 or higher
-* An OpenAI API Key
+* An **NVIDIA API Key**
 
 ### Installation & Setup
 
@@ -49,13 +50,13 @@ Follow these steps to get the project running on your local machine.
     ```
 
 3.  **Set Up Environment Variables:**
-    Create a `.env` file from the example and add your OpenAI API key.
+    Create a `.env` file from the example and add your NVIDIA API key.
     ```bash
     cp .env.example .env
     ```
     Now, open the `.env` file and add your key:
     ```
-    OPENAI_API_KEY="sk-..."
+    NVIDIA_API_KEY="nvapi-..."
     ```
 
 ### Data Preparation and Indexing
@@ -68,7 +69,7 @@ Follow these steps to get the project running on your local machine.
     ```
 
 2.  **Generate Embeddings:**
-    This script processes the PDFs, creates vector embeddings, and builds the FAISS index for retrieval.
+    This script processes the PDFs, creates vector embeddings using NeMo, and builds the FAISS index for retrieval.
     ```bash
     python scripts/embed_and_index.py
     ```
@@ -78,26 +79,3 @@ Follow these steps to get the project running on your local machine.
 Launch the Streamlit web interface.
 ```bash
 streamlit run ui/app.py
-```
-
-## 🏗️ Project Structure
-
-```
-Enterprise_Rag/
-├── ui/               # Streamlit frontend
-├── scripts/          # Core functionality
-├── Call_Transcripts/ # Earnings call storage
-├── models/           # FAISS vector store
-└── profile_pics/     # User uploaded images
-```
-
-## ⚙️ Configuration
-
-Edit `.streamlit/credentials.toml` for auth settings:
-```toml
-[server]
-port = 8501
-
-[theme]
-primaryColor = "#7f7f7f"
-```                                                                                     
