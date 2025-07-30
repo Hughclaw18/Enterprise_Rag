@@ -5,6 +5,10 @@ streamlit
 python-dotenv
 langchain-community
 sentence-transformers
+<<<<<<< HEAD
 fastapi
 uvicorn[standard]
 ragas
+=======
+huggingface-transformers
+>>>>>>> ac4b3e4f1087f9a52de0127b673e2f28304ae599
