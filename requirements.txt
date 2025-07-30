@@ -5,4 +5,5 @@ streamlit
 python-dotenv
 langchain-community
 sentence-transformers
-huggingface-transformers
+fastapi
+uvicorn[standard]

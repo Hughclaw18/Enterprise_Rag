@@ -2,7 +2,7 @@ import re
 import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
-from config import TRANSCRIPTS_DIR, CHUNK_SIZE, CHUNK_OVERLAP
+from scripts.config import TRANSCRIPTS_DIR, CHUNK_SIZE, CHUNK_OVERLAP
 
 def preprocess_transcript(text):
     # Remove boilerplate (e.g., headers, footers, disclaimers)

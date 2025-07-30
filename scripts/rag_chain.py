@@ -1,13 +1,13 @@
 import os
 from dotenv import load_dotenv
 from langchain.chains import RetrievalQA
-from langchain.chat_models import ChatOpenAI
+from langchain_nvidia_ai_endpoints import ChatNVIDIA
 from langchain.prompts import PromptTemplate
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CrossEncoderReranker
-from langchain.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.cross_encoders import HuggingFaceCrossEncoder
+from langchain_community.vectorstores import FAISS
+from langchain_nvidia_ai_endpoints import NVIDIAEmbeddings, NVIDIARerank, ChatNVIDIA
+
 
 import os
 from scripts import config
@@ -17,16 +17,20 @@ load_dotenv()
 def get_rag_chain():
     # Load the FAISS index
     if not os.path.exists(config.FAISS_INDEX_PATH):
-        raise FileNotFoundError(f"FAISS index not found at {FAISS_INDEX_PATH}. Please run embed_and_index.py first.")
+        raise FileNotFoundError(f"FAISS index not found at {config.FAISS_INDEX_PATH}. Please run embed_and_index.py first.")
     
-    embedding_model = HuggingFaceEmbeddings(model_name=config.NVIDIA_EMBEDDING_MODEL_NAME)
+    embedding_model = NVIDIAEmbeddings(model=config.NVIDIA_EMBEDDING_MODEL_NAME, api_key=config.NVIDIA_API_KEY, base_url=config.NVIDIA_API_BASE, truncate="NONE")
     vectorstore = FAISS.load_local(config.FAISS_INDEX_PATH, embedding_model, allow_dangerous_deserialization=True)
 
     # Initialize the reranker
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 40}) # Retrieve more documents for reranking
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 50}) # Retrieve more documents for reranking
     
-    cross_encoder_model = HuggingFaceCrossEncoder(model_name="BAAI/bge-reranker-base")
-    compressor = CrossEncoderReranker(model=cross_encoder_model, top_n=3) # Rerank to top 3
+    compressor = NVIDIARerank(
+        model=config.NVIDIA_RERANKING_MODEL_NAME,
+        api_key=config.NVIDIA_API_KEY,
+        base_url=config.NVIDIA_API_BASE,
+        top_n=8
+    )
     
     compression_retriever = ContextualCompressionRetriever(
         base_compressor=compressor,
@@ -40,12 +44,12 @@ def get_rag_chain():
     )
 
     # Initialize the LLM
-    llm = ChatOpenAI(
-        openai_api_base=config.OPENAI_API_BASE,
-        openai_api_key=config.OPENAI_API_KEY,
-        model_name=config.LLM_MODEL_NAME,
-        temperature=0.3
-    )
+    llm = ChatNVIDIA(
+         model=config.LLM_MODEL_NAME,
+         nvidia_api_key=config.NVIDIA_API_KEY,
+         base_url=config.NVIDIA_API_BASE,
+         temperature=0.3
+     )
 
     # Create the RAG chain
     rag_chain = RetrievalQA.from_chain_type(
