@@ -4,10 +4,10 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from scripts.rag_chain import get_rag_chain
 
-st.set_page_config(page_title="Echoes of the Oracle", page_icon="🔮")
+st.set_page_config(page_title="Enterprise Doc Master", page_icon="🔮")
 
-st.title("🔮 Echoes of the Oracle")
-st.markdown("### Your Mythic Guide to Corporate Prophecies")
+st.title("🔮 Enterprise Doc Master")
+st.markdown("### Your Guide to Corporate Transcripts")
 
 # Initialize RAG chain (cached to avoid reloading on every rerun)
 @st.cache_resource
@@ -34,7 +34,7 @@ if rag_chain:
             st.markdown(message["content"])
 
     # Accept user input
-    if query := st.chat_input("Ask Raegar Moonstorm about the earnings calls..."):
+    if query := st.chat_input("Ask Entity about the earnings calls..."):
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": query})
         # Display user message in chat message container
@@ -49,7 +49,7 @@ if rag_chain:
                 response = rag_chain.run(query)
                 full_response = response
             except Exception as e:
-                full_response = f"Raegar is momentarily lost in the cosmic winds. An error occurred: {e}"
+                full_response = f"Entity is lost at the moment. An error occurred: {e}"
             
             message_placeholder.markdown(full_response)
         st.session_state.messages.append({"role": "assistant", "content": full_response})
