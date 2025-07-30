@@ -46,8 +46,8 @@ if rag_chain:
             message_placeholder = st.empty()
             full_response = ""
             try:
-                response = rag_chain.run(query)
-                full_response = response
+                result = rag_chain({"query": query})
+                full_response = result["result"]
             except Exception as e:
                 full_response = f"Entity is lost at the moment. An error occurred: {e}"
             

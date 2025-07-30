@@ -1,5 +1,5 @@
-import re
 import os
+import re
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 from scripts.config import TRANSCRIPTS_DIR, CHUNK_SIZE, CHUNK_OVERLAP
@@ -31,8 +31,8 @@ def load_and_chunk_transcripts(company_name=None):
                 date = date_match.group(0) if date_match else "unknown"
 
                 splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=400,
-                    chunk_overlap=50,
+                    chunk_size=1200,
+                    chunk_overlap=250,
                     length_function=len,
                     is_separator_regex=False,
                 )

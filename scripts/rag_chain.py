@@ -7,9 +7,6 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CrossEncoderReranker
 from langchain_community.vectorstores import FAISS
 from langchain_nvidia_ai_endpoints import NVIDIAEmbeddings, NVIDIARerank, ChatNVIDIA
-from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy, context_precision, context_recall
 
 
 import os
@@ -54,7 +51,7 @@ def get_rag_chain():
          temperature=0.3
      )
 
-    # Create the RAG chain with evaluation metrics
+    # Create the RAG chain
     rag_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=compression_retriever,
@@ -62,44 +59,7 @@ def get_rag_chain():
         return_source_documents=True
     )
     
-    # Add evaluation wrapper
-    def evaluate_rag_chain(query, response, source_documents):
-        """
-        Evaluate RAG chain performance with various metrics using RAGAS
-        Returns:
-            dict: Dictionary containing evaluation metrics
-        """
-        data = {
-            'question': [query],
-            'answer': [response],
-            'contexts': [[doc.page_content for doc in source_documents]],
-            'ground_truths': [""], # RAGAS can use ground truths if available
-        }
-        dataset = Dataset.from_dict(data)
-
-        score = evaluate(
-            dataset,
-            metrics=[
-                faithfulness,
-                answer_relevancy,
-                context_precision,
-                context_recall,
-            ],
-            llm=llm, # Pass the LLM to RAGAS for evaluation
-            embeddings=embedding_model # Pass the embedding model to RAGAS for evaluation
-        )
-        return score.to_dict()
-    
-    # Wrap the original chain
-    def wrapped_chain(query):
-        result = rag_chain({"query": query})
-        response = result["result"]
-        source_documents = result["source_documents"]
-        
-        metrics = evaluate_rag_chain(query, response, source_documents)
-        return {"response": response, "metrics": metrics, "source_documents": source_documents}
-    
-    return wrapped_chain
+    return rag_chain
 
 if __name__ == "__main__":
     # Example usage
@@ -107,9 +67,8 @@ if __name__ == "__main__":
         chain = get_rag_chain()
         query = "What were the key takeaways from the latest earnings call?"
         print(f"Query: {query}")
-        result = chain(query)
-        print(f"Response: {result['response']}")
-        print(f"Metrics: {result['metrics']}")
+        result = chain({"query": query})
+        print(f"Response: {result['result']}")
         print(f"Source Documents: {result['source_documents']}")
     except FileNotFoundError as e:
         print(e)
